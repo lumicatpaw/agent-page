@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>Operation: Vital Code</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #0b0e11;
+        color: #e6e6e6;
+        font-family: "Agency FB", Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    /* --- LIIKKUVA DATAVIRTA-ANIMAATIO --- */
+    .data-stream {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background-image: 
+            linear-gradient(rgba(0, 255, 255, 0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 3px 20px, 20px 3px;
+        animation: drift 12s linear infinite;
+        opacity: 0.25;
+    }
+
+    @keyframes drift {
+        from { transform: translateY(0); }
+        to { transform: translateY(-100%); }
+    }
+
+    .container {
+        position: relative;
+        z-index: 2;
+        max-width: 600px;
+        padding: 40px;
+        border: 2px solid #1f6fb2;
+        background: rgba(10, 14, 18, 0.85);
+        box-shadow: 0 0 20px #1f6fb2;
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 48px;
+        letter-spacing: 3px;
+        margin-bottom: 10px;
+        color: #4db8ff;
+        text-transform: uppercase;
+    }
+
+    .subtitle {
+        font-size: 18px;
+        margin-bottom: 30px;
+        color: #9cc9ff;
+    }
+
+    input[type="text"] {
+        width: 80%;
+        padding: 12px;
+        font-size: 18px;
+        border: 2px solid #4db8ff;
+        border-radius: 4px;
+        background: #0b0e11;
+        color: #e6e6e6;
+        text-align: center;
+        letter-spacing: 1px;
+        transition: 0.2s;
+    }
+
+    /* --- VÄRÄHDYSVIRHE ANIMAATIO --- */
+    .shake {
+        animation: shake 0.3s;
+        border-color: #ff4d4d !important;
+        box-shadow: 0 0 10px #ff4d4d;
+    }
+
+    @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        50% { transform: translateX(6px); }
+        75% { transform: translateX(-6px); }
+        100% { transform: translateX(0); }
+    }
+
+    input[type="submit"] {
+        margin-top: 20px;
+        padding: 12px 30px;
+        font-size: 18px;
+        background: #1f6fb2;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    input[type="submit"]:hover {
+        background: #4db8ff;
+    }
+
+    .footer {
+        margin-top: 25px;
+        font-size: 14px;
+        color: #6f8aa8;
+    }
+</style>
+</head>
+
+<body>
+
+    <div class="data-stream"></div>
+
+    <div class="container">
+        <h1>Operation: Vital Code</h1>
+        <div class="subtitle">Syötä avainlause aktivoidaksesi protokollan</div>
+
+        <form onsubmit="return checkCode(event)">
+            <input id="codeInput" type="text" placeholder="Syötä avainlause..." required>
+            <br>
+            <input type="submit" value="Aktivoi">
+        </form>
+
+        <div class="footer">Luottamuksellinen. Vain valtuutetuille agenteille.</div>
+    </div>
+
+<script>
+    function checkCode(event) {
+        event.preventDefault();
+
+        const input = document.getElementById("codeInput");
+        const correct = "yliopistopalveluissa työn arvo syntyy yhteistyöstä"; // voit vaihtaa tähän haluamasi avainlauseen
+
+        if (input.value.trim() !== correct) {
+            input.classList.add("shake");
+            setTimeout(() => input.classList.remove("shake"), 400);
+            return false;
+        }
+
+        alert("Vital Code aktivoitu. Pääsy myönnetty.");
+        return true;
+    }
+</script>
+
+</body>
+</html>
