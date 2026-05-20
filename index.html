@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+
+<!-- ✅ TÄRKEIN: mobiilisäätö -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Operation: Vital Code</title>
 
@@ -18,11 +21,11 @@ body {
 /* YLÄTEKSTI */
 .top-title {
     position: absolute;
-    top: 20px;
+    top: 10px;
     width: 100%;
     text-align: center;
     font-size: 14px;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     color: #00ff88;
     z-index: 2;
 }
@@ -35,7 +38,7 @@ canvas {
     z-index: 0;
 }
 
-/* UI */
+/* BOX */
 .container {
     position: absolute;
     top: 50%;
@@ -43,32 +46,39 @@ canvas {
     transform: translate(-50%, -50%);
     z-index: 2;
 
-    padding: 40px;
-    width: 420px;
+    width: 90%;
+    max-width: 420px;
+
+    padding: 25px;
     border: 1px solid #00ff88;
     background: rgba(0, 0, 0, 0.85);
-    box-shadow: 0 0 25px rgba(0,255,136,0.5);
+    box-shadow: 0 0 20px rgba(0,255,136,0.5);
 }
 
+/* TEKSTIT */
 .subtitle {
-    font-size: 13px;
+    font-size: 15px;
     margin: 15px 0;
-    opacity: 0.7;
+    opacity: 0.8;
+    text-align: center;
 }
 
+/* INPUT */
 input[type="text"] {
     width: 100%;
-    padding: 10px;
+    padding: 14px;
+    font-size: 16px;
     background: black;
     border: 1px solid #00ff88;
     color: #00ff88;
-    font-family: inherit;
 }
 
+/* BUTTON */
 button {
     margin-top: 15px;
     width: 100%;
-    padding: 10px;
+    padding: 14px;
+    font-size: 16px;
     background: #00ff88;
     border: none;
     color: black;
@@ -79,17 +89,19 @@ button:hover {
     background: #00cc6e;
 }
 
+/* STATUS */
 .status {
     margin-top: 20px;
-    font-size: 13px;
-}
-
-.error {
-    color: #ff4d4d;
+    font-size: 16px;
+    text-align: center;
 }
 
 .success {
     color: #00ff88;
+}
+
+.error {
+    color: #ff4d4d;
 }
 
 /* GLITCH */
@@ -103,6 +115,21 @@ button:hover {
     50% { transform: translate(2px, -2px); }
     75% { transform: translate(-1px, 1px); }
     100% { transform: translate(0); }
+}
+
+/* 📱 EXTRA MOBIILI */
+@media (max-width: 480px) {
+    .top-title {
+        font-size: 12px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    button, input[type="text"] {
+        font-size: 16px;
+    }
 }
 </style>
 </head>
@@ -125,7 +152,7 @@ button:hover {
 </div>
 
 <script>
-/* MATRIX RAIN */
+/* MATRIX */
 const canvas = document.getElementById("matrix");
 const ctx = canvas.getContext("2d");
 
@@ -135,7 +162,6 @@ canvas.width = window.innerWidth;
 const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const fontSize = 16;
 const columns = canvas.width / fontSize;
-
 const drops = [];
 
 for (let i = 0; i < columns; i++) {
@@ -143,7 +169,7 @@ for (let i = 0; i < columns; i++) {
 }
 
 function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#00ff88";
@@ -153,8 +179,9 @@ function draw() {
         const text = letters[Math.floor(Math.random() * letters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
             drops[i] = 0;
+        }
 
         drops[i]++;
     }
@@ -162,44 +189,30 @@ function draw() {
 
 setInterval(draw, 33);
 
-/* DECRYPT EFFECT */
-function decryptEffect(finalText, element, callback) {
+/* DECRYPT */
+function decryptEffect(text, el, cb) {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let iterations = 0;
+    let i = 0;
 
     const interval = setInterval(() => {
-        element.innerText = finalText
+        el.innerText = text
             .split("")
             .map((letter, index) => {
-                if (index < iterations) return finalText[index];
+                if (index < i) return text[index];
                 return chars[Math.floor(Math.random() * chars.length)];
             })
             .join("");
 
-        if (iterations >= finalText.length) {
+        if (i >= text.length) {
             clearInterval(interval);
-            if (callback) callback();
+            if (cb) cb();
         }
 
-        iterations += 0.5;
+        i += 0.5;
     }, 30);
 }
 
-/* FAIL ANIMATION */
-function failEffect(status, input) {
-    status.classList.add("glitch");
-    input.classList.add("glitch");
-
-    status.innerText = "ACCESS DENIED";
-    status.className = "status error";
-
-    setTimeout(() => {
-        status.classList.remove("glitch");
-        input.classList.remove("glitch");
-    }, 600);
-}
-
-/* CHECK CODE */
+/* CHECK */
 function checkCode(event) {
     event.preventDefault();
 
@@ -209,7 +222,6 @@ function checkCode(event) {
     const correct = "yliopistopalveluissa työn arvo syntyy yhteistyöstä";
 
     status.innerText = "VERIFYING...";
-    status.className = "status";
 
     setTimeout(() => {
         if (input.value.trim().toLowerCase() === correct) {
@@ -223,14 +235,22 @@ function checkCode(event) {
             });
 
         } else {
-            failEffect(status, input);
+            status.className = "status error glitch";
+            status.innerText = "ACCESS DENIED";
+
+            input.classList.add("glitch");
+
+            setTimeout(() => {
+                status.className = "status error";
+                input.classList.remove("glitch");
+            }, 600);
         }
-    }, 700);
+    }, 600);
 
     return false;
 }
 
-/* RESPONSIVE */
+/* RESIZE */
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
